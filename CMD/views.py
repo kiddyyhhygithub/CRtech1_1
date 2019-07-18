@@ -29,13 +29,13 @@ def cmd(request):
     # jsonPath = os.path.join(settings.CA_ROOT, r'body.txt')
     # with open(jsonPath,'a+') as f:
     #     f.writelines(bodyStr + '\n')
-    with open(os.path.join(settings.CA_ROOT,'log.ini'),'a+') as f:
-        f.writelines(str( request.body) + '\n')
-    return HttpResponse('write ok')
+    # with open(os.path.join(settings.CA_ROOT,'log.ini'),'a+') as f:
+    #     f.writelines(str( request.body) + '\n')
+    # return HttpResponse('write ok')
     bodyStr = json.loads( request.body.decode('utf-8') )
     protocol = bodyStr['services'][0]['data']['serviceData']['MeterReading']['datas'][0]['protocol']
     print(protocol)
-    return HttpResponse(protocol)
+    # return HttpResponse(protocol)
     if protocol != 'NF0000442':
         return HttpResponse('ERR0')
     ca = (
@@ -46,15 +46,16 @@ def cmd(request):
 
     appid = r'4Ixi2dFrkeCLDchfpQwRsSYS0ewa'
     secret = r'JvitPmDQuLoncCiQyYzYOsBaIK4a'
-    iot = iotut.IoT(_appid=appid, _secret=secret, _cert=ca)
+    iot = iotut.IoT(_appid=appid, _secret=secret, _cert=ca)#必须要放if外面，否则会报错
 
 
     if token==None:
+
         token = iot.getToken()
         cache.set('token',token,60*30)
-        # filePath = os.path.join(settings.CA_ROOT,r'1.ext')
-        # with open(filePath,'a+') as f:
-        #     f.writelines(token + '\n')
+        filePath = os.path.join(settings.CA_ROOT,r'token_his.extend')
+        with open(filePath,'a+') as f:
+            f.writelines(token + '\n')
 
     print('token',token)
     deviceId = '4720af4a-4d47-42ed-a421-40cc05d24279'
