@@ -7,9 +7,17 @@ import yh.hy.IoTUtility.IoT as iotut
 import yh.hy.Const.IoTConst as iotconst
 from django.core.cache import cache
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
 def cmd(request):
 
+    # jsonPath = os.path.join(settings.CA_ROOT, r'body.txt')
+    # with open(jsonPath,'a+') as f:
+    #     f.writelines(str(request.body) + '\n')
 
+    # jsonPath1 = os.path.join(settings.CA_ROOT, r'bodydecode.txt')
+
+    # return HttpResponse('finish')
     # return HttpResponse(request.body.decode('utf-8'))
 
     # body = request.body
@@ -62,11 +70,50 @@ def cmd(request):
     serviceId = r'ZmSer'
     method = r'CMD'
     cmdValue = r'A00000'
-    cmdcode,cmdinf = iot.CMD(_token=token,
+
+    #是否是立即下发
+    EXPIRETIME = 0
+
+    #是否需要用线程池
+
+    #使用普通线程
+
+    local.cmdcode = None
+    local.cmdinf = None
+    # cmdcode,cmdinf = iot.CMD(_token=token,
+    #         _deviceId=deviceId,
+    #         _serviceId=serviceId,
+    #         _method=method,
+    #         _cmdvalue=cmdValue,
+    #         _expireTime=EXPIRETIME,
+    #         _callbackUrl=None)
+    threading.Thread(target=threadCMD(_token=token,
             _deviceId=deviceId,
             _serviceId=serviceId,
             _method=method,
             _cmdvalue=cmdValue,
-            _expireTime=0,
-            _callbackUrl=None)
+            _expireTime=EXPIRETIME,
+            _callbackUrl=None)).start()
+    cmdcode, cmdinf = local.cmdcode,local.cmdinf
+
+
+    iot = None
     return HttpResponse(cmdcode,cmdinf)
+local = threading.local()
+
+def threadCMD(_token,
+            _deviceId,
+            _serviceId,
+            _method,
+            _cmdvalue,
+            _expireTime,
+            _callbackUrl):
+    local.cmdcode, local.cmdinf = iotut.IoT.CMD(_token=_token,
+            _deviceId=_deviceId,
+            _serviceId=_serviceId,
+            _method=_method,
+            _cmdvalue=_cmdvalue,
+            _expireTime=_expireTime,
+            _callbackUrl=_callbackUrl)
+
+    pass
