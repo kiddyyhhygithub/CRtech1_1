@@ -108,6 +108,17 @@ def threadCMD(_token,
             _cmdvalue,
             _expireTime,
             _callbackUrl):
+    '''
+    为处理单独线程写的调用CMD方法的函数
+    :param _token:
+    :param _deviceId:
+    :param _serviceId:
+    :param _method:
+    :param _cmdvalue:
+    :param _expireTime:
+    :param _callbackUrl:
+    :return:
+    '''
     local.cmdcode, local.cmdinf = iotut.IoT.CMD(_token=_token,
             _deviceId=_deviceId,
             _serviceId=_serviceId,
