@@ -195,6 +195,16 @@ class ThreadClass(threading.Thread):
             local.cmdcode, local.cmdinf = cmdcode, cmdinf
             print(local.cmdcode, local.cmdinf)
 
+
+            # 在继续发一个RF0000418读南向是否为从状态
+            cmdValue = r'WF00004180100'
+            cmdcode, cmdinf = iot.CMD(_token=token,
+                                      _deviceId=deviceId,
+                                      _serviceId=serviceId,
+                                      _method=method,
+                                      _cmdvalue=cmdValue,
+                                      _expireTime=EXPIRETIME,
+                                      _callbackUrl=None)
             iot = None
         except Exception as ex:
             print(f'错误信息为：  ---    {ex}')
